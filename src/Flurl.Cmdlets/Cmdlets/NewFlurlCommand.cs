@@ -145,15 +145,14 @@ namespace Flurl.Cmdlets
             // by the the FluentQueryTransformAttribute
             if (MyInvocation.BoundParameters.ContainsKey(nameof(Query)))
             {
-                QueryParamCollection fluentQuery = new QueryParamCollection();
                 if (Query is QueryParamCollection collection)
                 {
                     var kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
-                    fluentQuery.AddRange(kvpEnumerable, this.NullValueHandling);
+                    url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
                 else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable)
                 {
-                    fluentQuery.AddRange(kvpEnumerable, this.NullValueHandling);
+                    url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
                 else
                 {
