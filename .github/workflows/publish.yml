@@ -37,7 +37,5 @@ jobs:
       - name: Publish to PowerShell Gallery
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
-        shell: pwsh
         run: |
-          $nupkg = Get-ChildItem ./artifacts/*.nupkg | Select-Object -First 1
-          Publish-PSResource -Path $nupkg.FullName -ApiKey $env:NUGET_KEY -Repository PSGallery -Verbose
+          dotnet nuget push ./artifacts/*.nupkg --api-key $NUGET_KEY --source https://www.powershellgallery.com/api/v2/package
