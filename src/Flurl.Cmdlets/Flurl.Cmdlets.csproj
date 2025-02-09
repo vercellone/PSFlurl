@@ -39,6 +39,6 @@
     <PropertyGroup>
       <PowerShellPath Condition="'$(PowerShellPath)' == ''">pwsh</PowerShellPath>
     </PropertyGroup>
-    <Exec Command='$(PowerShellPath) -NonInteractive -Command "$version=&apos;$(Version)&apos;; if($version -match &apos;(\d+\.\d+\.\d+)(-[a-zA-Z0-9\.]+)?&apos;) { $moduleVersion = $matches[1]; $prerelease = if($matches[2]){($matches[2]) -replace &apos;[.-]&apos;}else{$null}; Update-ModuleManifest -Path $(MSBuildThisFileDirectory)../../Flurl.psd1 -ModuleVersion $moduleVersion; if($prerelease) { Update-ModuleManifest -Path $(MSBuildThisFileDirectory)../../Flurl.psd1 -Prerelease $prerelease }}"' />
+    <Exec Command="$(PowerShellPath) -NonInteractive -File &quot;$(MSBuildThisFileDirectory)../../tools/Update-ModuleVersion.ps1&quot; -Version &quot;$(Version)&quot; -ModuleManifestPath &quot;$(MSBuildThisFileDirectory)../../Flurl.psd1&quot;" />
   </Target>
 </Project>
