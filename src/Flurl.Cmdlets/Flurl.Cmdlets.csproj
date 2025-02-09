@@ -39,6 +39,6 @@
     <PropertyGroup>
       <PowerShellPath Condition="'$(PowerShellPath)' == ''">pwsh</PowerShellPath>
     </PropertyGroup>
-    <Exec Command="$(PowerShellPath) -NonInteractive -File &quot;$(MSBuildThisFileDirectory)../../tools/Update-ModuleVersion.ps1&quot; -Version &quot;$(Version)&quot; -ModuleManifestPath &quot;$(MSBuildThisFileDirectory)../../Flurl.psd1&quot;" />
+    <Exec Command="$(PowerShellPath) -NonInteractive -File &quot;$(MSBuildThisFileDirectory)../../tools/Update-ModuleVersion.ps1&quot; -Version &quot;$(Version)&quot; -Path &quot;$(MSBuildThisFileDirectory)../../Flurl.psd1&quot;" />
   </Target>
 </Project>
