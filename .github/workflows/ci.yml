@@ -120,7 +120,7 @@ jobs:
               } | ConvertTo-Json
               Method         = 'POST'
               Authentication = 'Bearer'
-              Token          = $env:GH_TOKEN
+              Token          = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
               ContentType    = 'application/json'
           }
           Invoke-RestMethod @postParams
