@@ -1,4 +1,5 @@
 mode: ContinuousDeployment
+tag-prefix: '[vV]'
 branches:
   main:
     regex: ^main$
@@ -8,7 +9,3 @@ branches:
     regex: ^features?[/-]
     increment: Inherit
     source-branches: ['main']
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
-tag-prefix: 'v'
