@@ -108,13 +108,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $version = (Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg).BaseName -replace 'Flurl\.Cmdlets\.'
+          $nupkg = Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg
+          $version = $nupgk.BaseName -replace 'Flurl\.Cmdlets\.'
           Write-Host "Version: $version"
-          $postParams = @{
-              Uri            = 'https://api.github.com/repos/${{ github.repository }}/releases'
-              Headers        = @{
-                  'Accept' = 'application/vnd.github.v3+json'
-              }
+          $secureToken = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
+          $releaseParams = @{
+              Authentication = 'Bearer'
               Body           = @{
                   tag_name   = "v$version"
                   name       = "v$version"
@@ -122,15 +121,27 @@ jobs:
                   draft      = $false
                   prerelease = $false
               } | ConvertTo-Json
-              Method         = 'POST'
-              Authentication = 'Bearer'
-              Token          = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
               ContentType    = 'application/json'
+              Headers        = @{ Accept = 'application/vnd.github.v3+json' }
+              Method         = 'POST'
+              Token          = $secureToken
+              Uri            = 'https://api.github.com/repos/${{ github.repository }}/releases'
           }
-          Invoke-RestMethod @postParams
+          $release = Invoke-RestMethod @releaseParams
+          # Upload asset
+          $assetParams = @{
+              Authentication = 'Bearer'
+              ContentType    = 'application/octet-stream'
+              Headers        = @{ Accept = 'application/vnd.github.v3+json' }
+              InFile         = $nupkg.FullName
+              Method         = 'POST'
+              Token          = $secureToken
+              Uri            = $release.upload_url -replace '\{\?.*\}',"?name=$($nupkg.Name)"
+          }
+          Invoke-RestMethod @assetParams
           
-      # - name: Publish to PowerShell Gallery
-      #   env:
-      #     NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
-      #   run: |
-      #     dotnet nuget push ./artifacts/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
+      - name: Publish to PowerShell Gallery
+        env:
+          NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
