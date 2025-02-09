@@ -13,7 +13,7 @@ Write-Host "Processing version: $Version"
 if($Version -match '(\d+\.\d+\.\d+)(-[a-zA-Z0-9\.]+)?') {
     $moduleVersion = $matches[1]
     Write-Host "Module version: $moduleVersion"
-    $prerelease = if($matches[2]){($matches[2]).TrimStart('-')}else{$null}
+    $prerelease = if($matches[2]){($matches[2]) -replace '[.-]'}else{$null}
     Write-Host "Prerelease: $prerelease"
     
     Update-ModuleManifest -Path $Path -ModuleVersion $moduleVersion
@@ -24,3 +24,5 @@ if($Version -match '(\d+\.\d+\.\d+)(-[a-zA-Z0-9\.]+)?') {
     Write-Error "Invalid version format: $Version"
     exit 1
 }
+
+'a.c-b' -replace '[.-]'
