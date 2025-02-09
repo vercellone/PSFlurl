@@ -87,10 +87,11 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList       = @(
+FileList = @(
     'lib/netstandard2.0/Flurl.Cmdlets.dll', 
     'lib/netstandard2.0/Flurl.dll',
-    'Flurl.types.ps1xml'
+    'Flurl.types.ps1xml',
+    'icon.png',
     'LICENSE',
     'README.md'
 )
