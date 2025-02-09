@@ -13,16 +13,24 @@ jobs:
           RELEASE_INFO: ${{ toJSON(github.event.release) }}
         run: |
           echo "Release Tag: ${{ github.event.release.tag_name }}"
-          echo "Target Commitish: ${{ github.event.release.target_commitish }}"
           echo "Full Release Info: $RELEASE_INFO"
-      
+    
+      - name: Get Tag SHA
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(gh api repos/${{ github.repository }}/git/refs/tags/${{ github.event.release.tag_name }} --jq .object.sha)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+          echo "Tag ${{ github.event.release.tag_name }} points to: $SHA"
+
       - name: Download Artifact from CI Run
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: ci.yml
           workflow_conclusion: success
-          commit: ${{ github.event.release.target_commitish }}
+          commit: ${{ steps.tag.outputs.sha }}
           name: nupkg
           path: artifacts
 
