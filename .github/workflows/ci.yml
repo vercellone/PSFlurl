@@ -73,11 +73,11 @@ jobs:
         shell: pwsh
         run: |
           Install-Module Pester -Force -Scope CurrentUser
-          Import-Module Pester -Force -PassThru
           
       - name: Run Tests
         shell: pwsh
         run: |
+          Import-Module Pester -Force -PassThru
           Import-Module ./artifacts/Flurl/Flurl.psd1 -Force -Verbose
           $config = [PesterConfiguration]::Default
           $config.Run.Path = Resolve-Path -Path './artifacts/Flurl/Flurl.Tests.ps1'
