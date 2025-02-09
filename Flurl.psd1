@@ -105,10 +105,10 @@ PrivateData = @{
         Tags = 'Flurl','ParseQueryString','QueryString','Uri','Url'
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/vercellone/PSFlurl/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/vercellone/Flurl'
+        ProjectUri = 'https://github.com/vercellone/PSFlurl'
 
         # A URL to an icon representing this module.
         IconUri = 'icon.png'
