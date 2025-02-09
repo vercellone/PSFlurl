@@ -9,7 +9,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Write-Host "Processing version: $Version"
-
 if($Version -match '(\d+\.\d+\.\d+)(-[a-zA-Z0-9\.]+)?') {
     $moduleVersion = $matches[1]
     Write-Host "Module version: $moduleVersion"
@@ -24,5 +23,3 @@ if($Version -match '(\d+\.\d+\.\d+)(-[a-zA-Z0-9\.]+)?') {
     Write-Error "Invalid version format: $Version"
     exit 1
 }
-
-'a.c-b' -replace '[.-]'
