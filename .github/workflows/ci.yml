@@ -109,7 +109,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $nupkg = Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg
-          $version = $nupgk.BaseName -replace 'Flurl\.Cmdlets\.'
+          $version = $nupkg.BaseName -replace 'Flurl\.Cmdlets\.'
           Write-Host "Version: $version"
           $secureToken = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
           $releaseParams = @{
@@ -128,6 +128,7 @@ jobs:
               Uri            = 'https://api.github.com/repos/${{ github.repository }}/releases'
           }
           $release = Invoke-RestMethod @releaseParams
+          $release
           # Upload asset
           $assetParams = @{
               Authentication = 'Bearer'
