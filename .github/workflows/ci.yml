@@ -38,8 +38,8 @@ jobs:
       
       - name: Build and Pack
         run: |
-          dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }}
-          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }} --output artifacts
+          dotnet build src/PSFlurl/PSFlurl.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }}
+          dotnet pack src/PSFlurl/PSFlurl.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }} --output artifacts
       
       - name: Upload Package Artifact
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
         shell: pwsh
         run: |
           $nupkg = Get-ChildItem ./artifacts/*.nupkg
-          $extractPath = Join-Path ./artifacts 'Flurl'
+          $extractPath = Join-Path ./artifacts 'PSFlurl'
           Expand-Archive -Path $nupkg -DestinationPath $extractPath
           Write-Host "Extracted module to: $extractPath"
       
@@ -84,9 +84,9 @@ jobs:
         shell: pwsh
         run: |
           Import-Module Pester -Force -PassThru
-          Import-Module ./artifacts/Flurl/Flurl.psd1 -Force -Verbose
+          Import-Module ./artifacts/PSFlurl/PSFlurl.psd1 -Force -Verbose
           $config = [PesterConfiguration]::Default
-          $config.Run.Path = './Flurl.Tests.ps1'
+          $config.Run.Path = './PSFlurl.Tests.ps1'
           $config.Output.Verbosity = 'Detailed'
           $config.Run.PassThru = $true
           Invoke-Pester -Configuration $config
@@ -108,8 +108,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $nupkg = Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg
-          $version = $nupkg.BaseName -replace 'Flurl\.Cmdlets\.'
+          $nupkg = Get-ChildItem ./artifacts/PSFlurl.*.nupkg
+          $version = $nupkg.BaseName -replace 'PSFlurl\.'
           Write-Host "Version: $version"
           $secureToken = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
           $releaseParams = @{

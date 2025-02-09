@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using Flurl;
 
-namespace Flurl.Cmdlets.TypeConverters {
+namespace PSFlurl.TypeConverters {
     public class UrlTypeConverter : TypeConverter {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
             if (sourceType == typeof(string) || sourceType == typeof(Uri))

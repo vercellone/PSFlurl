@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
-using Flurl.Cmdlets.Attributes;
-using Flurl.Cmdlets.Utilities;
-using Flurl.Cmdlets.Extensions;
+using Flurl;
+using PSFlurl.Attributes;
+using PSFlurl.Utilities;
+using PSFlurl.Extensions;
 
-namespace Flurl.Cmdlets {
+namespace PSFlurl.Cmdlets {
 
     [Cmdlet(VerbsCommon.New, "Flurl")]
-    [OutputType(typeof(Url))]
+    [OutputType(typeof(string))]
     [OutputType(typeof(Uri))]
+    [OutputType(typeof(Url))]
     public class NewFlurl : PSCmdlet {
         /// <summary>
         /// <para type="description">The base URI to start with.</para>

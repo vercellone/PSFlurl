@@ -18,4 +18,4 @@ WORKDIR /workspaces/PSFlurl
 COPY . /workspaces/PSFlurl
 
 # Import the module
-RUN pwsh -c 'Import-Module /workspaces/PSFlurl/Flurl.psd1'
+RUN pwsh -c 'Import-Module /workspaces/PSFlurl/PSFlurl.psd1'

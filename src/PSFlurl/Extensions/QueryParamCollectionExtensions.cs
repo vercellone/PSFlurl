@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Flurl;
 
-namespace Flurl.Cmdlets.Extensions {
+namespace PSFlurl.Extensions {
     public static class QueryParamCollectionExtensions {
         public static void AddRange(this QueryParamCollection fluentQuery, IEnumerable<KeyValuePair<string, object>> kvpEnumerable, NullValueHandling nullValueHandling) {
             foreach (KeyValuePair<string, object> kvp in kvpEnumerable) {

@@ -4,7 +4,7 @@
         {
             "label": "Import PSFlurl Module",
             "type": "shell",
-            "command": "Import-Module -Name 'D:/src/github/PSFlurl/Flurl.psd1' -Force -Verbose",
+            "command": "Import-Module -Name '${workspaceFolder}/PSFlurl.psd1' -Force -Verbose",
             "problemMatcher": []
         }
     ]

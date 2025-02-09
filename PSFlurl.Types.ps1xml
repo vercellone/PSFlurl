@@ -3,7 +3,7 @@
     <Type>
         <Name>Flurl.Url</Name>
         <TypeConverter>
-            <TypeName>Flurl.Cmdlets.TypeConverters.UrlTypeConverter</TypeName>
+            <TypeName>PSFlurl.TypeConverters.UrlTypeConverter</TypeName>
         </TypeConverter>
     </Type>
 </Types>

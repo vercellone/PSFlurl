@@ -1,8 +1,9 @@
 using System.ComponentModel;
 using System.Management.Automation;
-using Flurl.Cmdlets.TypeConverters;
+using Flurl;
+using PSFlurl.TypeConverters;
 
-namespace Flurl.Cmdlets {
+namespace PSFlurl {
     public class ModuleInitializer : IModuleAssemblyInitializer {
         public void OnImport() {
             var typeConverter = new UrlTypeConverter();

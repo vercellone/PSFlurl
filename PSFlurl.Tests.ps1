@@ -1,4 +1,4 @@
-Describe 'Flurl.Cmdlets' {
+Describe 'PSFlurl' {
 
     Context 'New-FlQuery' {
 

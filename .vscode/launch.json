@@ -5,7 +5,7 @@
             "type": "PowerShell",
             "request": "launch",
             "name": "PowerShell: Launch PowerShell",
-            "script": "Invoke-Pester '${workspaceFolder}/Flurl.Tests.ps1' -Output Detailed",
+            "script": "Invoke-Pester '${workspaceFolder}/PSFlurl.Tests.ps1' -Output Detailed",
             "args": [],
             "cwd": "${workspaceFolder}",
             "createTemporaryIntegratedConsole": true,

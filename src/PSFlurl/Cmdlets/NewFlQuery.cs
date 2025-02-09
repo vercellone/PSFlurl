@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using Flurl.Cmdlets.Attributes;
-using Flurl.Cmdlets.Extensions;
-using Flurl.Cmdlets.Utilities;
+using Flurl;
+using PSFlurl.Attributes;
+using PSFlurl.Extensions;
+using PSFlurl.Utilities;
 
-namespace Flurl.Cmdlets {
+namespace PSFlurl.Cmdlets {
     [Cmdlet(VerbsCommon.New, "FlQuery")]
     [OutputType(typeof(string))]
     [OutputType(typeof(QueryParamCollection))]

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using Flurl;
 
-namespace Flurl.Cmdlets.Attributes {
+namespace PSFlurl.Attributes {
     [AttributeUsage(AttributeTargets.Property)]
     public class FluentQueryTransformAttribute : ArgumentTransformationAttribute {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData) {

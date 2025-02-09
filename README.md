@@ -1,8 +1,10 @@
-# Flurl
+# PSFlurl
 
-This Flurl PowerShell module was born out of frustration with the limitations of .NET's `Uri`, `UriBuilder`, and `HttpUtility.ParseQueryString`. These native tools fall short when dealing with modern URL manipulation needs, especially with regard to encoding paths and query strings. After evaluating various options, the [Flurl](https://flurl.dev) library emerged as the clear solution, offering an elegant and powerful API for URL manipulation.
+[![CI](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml/badge.svg)](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml)
 
-## Why Flurl?
+PSFlurl was born out of frustration with the limitations of .NET's `Uri`, `UriBuilder`, and `HttpUtility.ParseQueryString`. These native tools fall short when dealing with modern URL manipulation needs, especially with regard to encoding paths and query strings. After evaluating various options, the [Flurl](https://flurl.dev) library emerged as the clear solution, offering an elegant and powerful API for URL manipulation.
+
+## Why PSFlurl?
 
 As detailed in [Flurl documentation](https://flurl.dev/docs/fluent-url/), Flurl addresses several key shortcomings of the .NET framework's URL handling.
 
@@ -127,13 +129,13 @@ https://api.example.com/v2/search?q=test+query&sort=relevance&filter=active#resu
 ### Install from PowerShellGallery
 
 ```powershell
-Install-Module -Name Flurl -Repository PSGallery -Scope CurrentUser
+Install-Module -Name PSFlurl -Repository PSGallery -Scope CurrentUser
 ```
 
 ### Import the module
 
 ```powershell
-Import-Module -Name Flurl
+Import-Module -Name PSFlurl
 ```
 
 ## Contributing

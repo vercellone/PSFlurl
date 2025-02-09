@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Flurl.Cmdlets</PackageId>
+    <PackageId>PSFlurl</PackageId>
     <Authors>Jason Vercellone</Authors>
     <CompanyName>vercellone</CompanyName>
     <Copyright>Copyright ©  2025</Copyright>
@@ -24,8 +24,8 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)../../LICENSE" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)../../Flurl.psd1" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)../../Flurl.types.ps1xml" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../PSFlurl.psd1" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../PSFlurl.Types.ps1xml" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
@@ -42,6 +42,6 @@
     <PropertyGroup>
       <PowerShellPath Condition="'$(PowerShellPath)' == ''">pwsh</PowerShellPath>
     </PropertyGroup>
-    <Exec Command="$(PowerShellPath) -NonInteractive -File &quot;$(MSBuildThisFileDirectory)../../tools/Update-ModuleVersion.ps1&quot; -Version &quot;$(Version)&quot; -Path &quot;$(MSBuildThisFileDirectory)../../Flurl.psd1&quot;" />
+    <Exec Command="$(PowerShellPath) -NonInteractive -File &quot;$(MSBuildThisFileDirectory)../../tools/Update-ModuleVersion.ps1&quot; -Version &quot;$(Version)&quot; -Path &quot;$(MSBuildThisFileDirectory)../../PSFlurl.psd1&quot;" />
   </Target>
 </Project>

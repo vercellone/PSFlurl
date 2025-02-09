@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Flurl;
 using System.Linq;
 
-namespace Flurl.Cmdlets.Utilities {
+namespace PSFlurl.Utilities {
     public static class QueryParamCollectionConverter {
         public static IEnumerable<KeyValuePair<string, object>> ConvertToKeyValuePairs(QueryParamCollection collection) {
             return from kvp in collection
