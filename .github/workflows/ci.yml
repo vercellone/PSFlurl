@@ -54,6 +54,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
       - name: Download Package Artifact
         uses: actions/download-artifact@v4
@@ -80,9 +82,10 @@ jobs:
           Import-Module Pester -Force -PassThru
           Import-Module ./artifacts/Flurl/Flurl.psd1 -Force -Verbose
           $config = [PesterConfiguration]::Default
-          $config.Run.Path = Resolve-Path -Path './artifacts/Flurl/Flurl.Tests.ps1'
+          $config.Run.Path = './Flurl.Tests.ps1'
           $config.Output.Verbosity = 'Detailed'
-          Invoke-Pester -Configuration $config -PassThru
+          $config.Run.PassThru = $true
+          Invoke-Pester -Configuration $config
           
   publish:
     name: Publish
