@@ -32,9 +32,9 @@ jobs:
       
       - name: Build and Pack
         run: |
-          dotnet restore
-          dotnet publish --configuration Release
-          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts
+          dotnet restore src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release
+          dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release -p:Version=${{ steps.gitversion.outputs.semVer }}
+          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts -p:Version=${{ steps.gitversion.outputs.semVer }}
       
       - name: Upload Package Artifact
         uses: actions/upload-artifact@v4
