@@ -33,7 +33,7 @@ Copyright = '(c) 2025 Jason Vercellone. All rights reserved.'
 Description = 'Fluent URL Building with Flurl.'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.4'
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -54,7 +54,10 @@ PowerShellVersion = '7.4'
 # RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
-# RequiredAssemblies = @()
+RequiredAssemblies = @(
+    'lib/netstandard2.0/Flurl.dll'
+    'lib/netstandard2.0/PSFlurl.dll'
+)
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
