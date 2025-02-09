@@ -14,6 +14,15 @@ namespace PSFlurl.Attributes {
         }
 
         private static object TransformQuery(object query) {
+            if (query is PSObject psObject) {
+                if (psObject.BaseObject is QueryParamCollection unwrappedQueryParamCollection) {
+                    return unwrappedQueryParamCollection;
+                }
+                if (psObject.BaseObject is object[] objectArray && objectArray.Length > 0 && objectArray[0] is QueryParamCollection) {
+                    return objectArray[0] as QueryParamCollection;
+                }
+            } 
+
             if (query is object[] stringArray && stringArray.Length > 0 && stringArray[0] is string) {
                 query = string.Join("&", stringArray); // Bit of a hack; The Cmdlets rebuild params from scratch to honor NullValueHandling
             }
@@ -39,7 +48,7 @@ namespace PSFlurl.Attributes {
                 return array.Cast<IDictionary>().SelectMany(dict => dict.Cast<DictionaryEntry>()
                     .Select(entry => new KeyValuePair<string, object>(entry.Key.ToString(), entry.Value)));
             }
-            throw new ArgumentException("Query must be a string, IDictionary, NameValueCollection, array of IDictionary, or IEnumerable<KeyValuePair<string, object>>");
+            return query;
         }
 
     }

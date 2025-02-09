@@ -10,7 +10,9 @@ using PSFlurl.Extensions;
 
 namespace PSFlurl.Cmdlets {
 
-    [Cmdlet(VerbsCommon.New, "Flurl")]
+    // DefaultParameterSetName = "None" is required to allow usage with no parameters.
+    // The Uri and Query ParameterSets facilitate either (but not both) to accept ValueFromPipeline.
+    [Cmdlet(VerbsCommon.New, "Flurl", DefaultParameterSetName = "None")]
     [OutputType(typeof(string))]
     [OutputType(typeof(Uri))]
     [OutputType(typeof(Url))]
@@ -18,7 +20,9 @@ namespace PSFlurl.Cmdlets {
         /// <summary>
         /// <para type="description">The base URI to start with.</para>
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, ParameterSetName = "Uri", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "FlQuery", Position = 0, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "None", Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public Uri Uri { get; set; }
 
@@ -103,8 +107,20 @@ namespace PSFlurl.Cmdlets {
         [Parameter]
         public SwitchParameter AsString { get; set; }
 
+        /// <summary>
+        /// <para type="description">The query parameters to add to the URI.</para>
+        /// </summary>
+        [Parameter(DontShow = true, Mandatory = true, ParameterSetName = "FlQuery", ValueFromPipeline = true)]
+        public QueryParamCollection FlQuery { get; set; }
+
         protected override void ProcessRecord() {
             Url url = Uri == null ? new Url() : new Url(Uri.ToString());
+
+            // Handle QueryParamCollection ValueFromPipeline
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(FlQuery))) {
+                IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(FlQuery);
+                url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
+            }
 
             // Map simple parameters to properties
             var parameters = new (string Name, Action Action)[]
@@ -145,7 +161,7 @@ namespace PSFlurl.Cmdlets {
                     url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
                 else {
-                    WriteError(new ErrorRecord(new ArgumentException("Query must be a string, IDictionary, NameValueCollection, array of IDictionary, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
+                    WriteError(new ErrorRecord(new ArgumentException($"Query ({Query.GetType().FullName}) must be string(s), IDictionary(s), NameValueCollection, QueryParamCollection, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
                 }
             }
             if (AsString.IsPresent || EncodeSpaceAsPlus.IsPresent) {

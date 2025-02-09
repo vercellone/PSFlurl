@@ -48,7 +48,7 @@ namespace PSFlurl.Cmdlets {
                 fluentQuery.AddRange(kvpEnumerable, this.NullValueHandling);
             }
             else {
-                WriteError(new ErrorRecord(new ArgumentException("Query must be a string, IDictionary, NameValueCollection, array of IDictionary, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
+                WriteError(new ErrorRecord(new ArgumentException($"Query ({Query.GetType().FullName}) must be string(s), IDictionary(s), NameValueCollection, QueryParamCollection, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
                 return;
             }
 
@@ -56,7 +56,8 @@ namespace PSFlurl.Cmdlets {
                 WriteObject(fluentQuery.ToString(EncodeSpaceAsPlus.IsPresent));
             }
             else {
-                WriteObject(fluentQuery);
+                // Wrap in an array for better pipeline experience
+                WriteObject(new object[] { fluentQuery });
             }
         }
     }
