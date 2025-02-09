@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish-to-gallery:
-    runs-on: linux-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Download Release Package
         uses: actions/download-artifact@v4
