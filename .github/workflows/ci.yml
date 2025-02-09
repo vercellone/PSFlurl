@@ -3,11 +3,13 @@ name: CI
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and Package
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,9 +34,8 @@ jobs:
       
       - name: Build and Pack
         run: |
-          dotnet restore src/Flurl.Cmdlets/Flurl.Cmdlets.csproj
-          dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release -p:Version=${{ steps.gitversion.outputs.semVer }}
-          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts -p:Version=${{ steps.gitversion.outputs.semVer }}
+          dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }}
+          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj -c Release -p:Version=${{ steps.gitversion.outputs.semVer }} --output artifacts
       
       - name: Upload Package Artifact
         uses: actions/upload-artifact@v4
@@ -42,3 +43,70 @@ jobs:
           name: nupkg
           path: ./artifacts/*.nupkg
           retention-days: 5
+
+  test:
+    name: Test (${{ matrix.os }})
+    needs: build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts
+
+      - name: Extract Module
+        shell: pwsh
+        run: |
+          $nupkg = Get-ChildItem ./artifacts/*.nupkg
+          $extractPath = Join-Path ./artifacts 'Flurl'
+          Expand-Archive -Path $nupkg -DestinationPath $extractPath
+          Write-Host "Extracted module to: $extractPath"
+      
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module Pester -Force -Scope CurrentUser
+          Import-Module Pester -Force -PassThru
+          
+      - name: Run Tests
+        shell: pwsh
+        run: |
+          Import-Module ./artifacts/Flurl/Flurl.psd1 -Force -Verbose
+          $config = [PesterConfiguration]::Default
+          $config.Run.Path = Resolve-Path -Path './artifacts/Flurl/Flurl.Tests.ps1'
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config -PassThru
+          
+  publish:
+    name: Publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts
+
+      - name: Create Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg).BaseName -replace 'Flurl\.Cmdlets\.'
+          Write-Host "Creating release for version $version"
+          gh release create v$version --title "v$version" --notes "Release v$version"
+          
+      # - name: Publish to PowerShell Gallery
+      #   env:
+      #     NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
+      #   run: |
+      #     dotnet nuget push ./artifacts/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package

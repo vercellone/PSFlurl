@@ -1,11 +1,1 @@
-mode: ContinuousDeployment
-tag-prefix: '[vV]'
-branches:
-  main:
-    regex: ^main$
-    increment: Patch
-    is-release-branch: true
-  feature:
-    regex: ^features?[/-]
-    increment: Inherit
-    source-branches: ['main']
+mode: ContinuousDelivery
