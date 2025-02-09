@@ -32,7 +32,7 @@ jobs:
       
       - name: Build and Pack
         run: |
-          dotnet restore src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release
+          dotnet restore src/Flurl.Cmdlets/Flurl.Cmdlets.csproj
           dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release -p:Version=${{ steps.gitversion.outputs.semVer }}
           dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts -p:Version=${{ steps.gitversion.outputs.semVer }}
       

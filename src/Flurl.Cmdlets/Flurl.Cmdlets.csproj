@@ -28,7 +28,7 @@
 
   <Target Name="AddDependencies" BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <_PackageFiles Include="$(OutputPath)\$(TargetFramework)\Flurl.dll">
+      <_PackageFiles Include="$(OutputPath)\Flurl.dll">
         <PackagePath>lib\$(TargetFramework)</PackagePath>
         <BuildAction>None</BuildAction>
       </_PackageFiles>
