@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Flurl</PackageId>
+    <Authors>Jason Vercellone</Authors>
+    <CompanyName>vercellone</CompanyName>
+    <Copyright>Copyright ©  2025</Copyright>
+    <Description>Fluent URL Building with Flurl</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl" Version="4.0.0" PrivaeAssets="All" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivaeAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../../LICENSE" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../Flurl.psd1" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <!-- 
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>False</DebugSymbols>
+        <DebugType>None</DebugType>
+    </PropertyGroup>
+  -->
+</Project>

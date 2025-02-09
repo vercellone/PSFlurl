@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell: Launch PowerShell",
+            "script": "Invoke-Pester '${workspaceFolder}/Flurl.Tests.ps1' -Output Detailed",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "createTemporaryIntegratedConsole": true,
+            "preLaunchTask": "Import PSFlurl Module"
+        }
+    ]
+}

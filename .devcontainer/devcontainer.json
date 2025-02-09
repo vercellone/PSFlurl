@@ -1,0 +1,19 @@
+{
+    "name": "PowerShell Development Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "VARIANT": "latest"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/usr/bin/pwsh"
+            }
+        }
+    },
+    "postCreateCommand": "pwsh -c 'Import-Module /workspaces/PSFlurl/Flurl.psd1'",
+    "remoteUser": "vscode",
+    "workspaceFolder": "/workspaces/PSFlurl"
+}

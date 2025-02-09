@@ -1,0 +1,24 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-to-gallery:
+    runs-on: linux-latest
+    steps:
+      - name: Download Release Package
+        uses: actions/download-artifact@v4
+        with:
+          name: nupkg
+          path: ./artifacts
+      
+      # Disabled until we can get a PSGallery API key secret set up
+      # - name: Publish to PowerShell Gallery
+      #   env:
+      #     NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
+      #   shell: pwsh
+      #   run: |
+      #     $nupkg = Get-ChildItem ./artifacts/*.nupkg | Select-Object -First 1
+      #     Publish-PSResource -Path $nupkg.FullName -ApiKey $env:NUGET_KEY -Repository PSGallery -Verbose

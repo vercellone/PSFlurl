@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Import PSFlurl Module",
+            "type": "shell",
+            "command": "Import-Module -Name 'D:/src/github/PSFlurl/Flurl.psd1' -Force -Verbose",
+            "problemMatcher": []
+        }
+    ]
+}
