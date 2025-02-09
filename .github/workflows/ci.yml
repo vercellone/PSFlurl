@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write    # Required for creating releases
+  packages: write    # Required for publishing packages
+
 jobs:
   build:
     name: Build
