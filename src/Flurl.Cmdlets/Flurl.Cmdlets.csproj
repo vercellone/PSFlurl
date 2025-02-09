@@ -1,17 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Flurl</PackageId>
+    <PackageId>Flurl.Cmdlets</PackageId>
     <Authors>Jason Vercellone</Authors>
     <CompanyName>vercellone</CompanyName>
     <Copyright>Copyright ©  2025</Copyright>
     <Description>Fluent URL Building with Flurl</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <OutputPath>$(MSBuildThisFileDirectory)../../lib</OutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- Version Information managed by GitVersion -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl" Version="4.0.0" PrivaeAssets="All" />
+    <PackageReference Include="Flurl" Version="4.0.0" GeneratePathProperty="true" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivaeAssets="All" />
   </ItemGroup>
 
@@ -20,10 +25,20 @@
     <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../Flurl.psd1" Pack="true" PackagePath="" />
   </ItemGroup>
-  <!-- 
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <DebugSymbols>False</DebugSymbols>
-        <DebugType>None</DebugType>
+
+  <Target Name="AddDependencies" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_PackageFiles Include="$(OutputPath)\$(TargetFramework)\Flurl.dll">
+        <PackagePath>lib\$(TargetFramework)</PackagePath>
+        <BuildAction>None</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="UpdateModuleManifest" AfterTargets="Build">
+    <PropertyGroup>
+      <PowerShellPath Condition="'$(PowerShellPath)' == ''">pwsh</PowerShellPath>
     </PropertyGroup>
-  -->
+    <Exec Command="$(PowerShellPath) -NonInteractive -Command &quot;Update-ModuleManifest -Path $(MSBuildThisFileDirectory)..\\..\\Flurl.psd1 -ModuleVersion '$(Version)'&quot;" />
+  </Target>
 </Project>

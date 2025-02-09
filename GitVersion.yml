@@ -1,0 +1,17 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    regex: ^main$
+    tag: ''
+    increment: Patch
+    track-merge-target: true
+    tracks-release-branches: true
+    is-release-branch: true
+  feature:
+    regex: ^feature?[/-]
+    tag: alpha
+    increment: Inherit
+    source-branches: ['main']
+ignore:
+  sha: []
+merge-message-formats: {}

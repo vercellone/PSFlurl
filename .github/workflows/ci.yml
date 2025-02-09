@@ -11,7 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.10.2
+        with:
+          versionSpec: '5.x'
+    
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+        
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -20,7 +31,7 @@ jobs:
       - name: Build and Pack
         run: |
           dotnet restore
-          dotnet build --configuration Release
+          dotnet publish --configuration Release
           dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts
       
       - name: Upload Package Artifact
