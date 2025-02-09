@@ -8,17 +8,25 @@ jobs:
   publish-to-gallery:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Tag SHA
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(gh api repos/${{ github.repository }}/git/refs/tags/${{ github.event.release.tag_name }} --jq .object.sha)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+          echo "Tag ${{ github.event.release.tag_name }} points to: $SHA"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ steps.tag.outputs.sha }}
 
-      - name: Fetch Tags and Checkout
+      - name: Debug Git State
         run: |
-          git fetch --tags --force
-          git checkout ${{ github.event.release.tag_name }}
+          echo "HEAD is at: $(git rev-parse HEAD)"
+          echo "Git describe: $(git describe --tags)"
           echo "Current state: $(git status)"
-          echo "Describe: $(git describe --tags)"
-          echo "HEAD commitish: $(git rev-parse HEAD)"
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.10.2
