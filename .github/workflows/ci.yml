@@ -105,8 +105,25 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $version = (Get-ChildItem ./artifacts/Flurl.Cmdlets.*.nupkg).BaseName -replace 'Flurl\.Cmdlets\.'
-          Write-Host "Creating release for version $version"
-          gh release create v$version --title "v$version" --notes "Release v$version"
+          Write-Host "Version: $version"
+          $postParams = @{
+              Uri            = 'https://api.github.com/repos/${{ github.repository }}/releases'
+              Headers        = @{
+                  'Accept' = 'application/vnd.github.v3+json'
+              }
+              Body           = @{
+                  tag_name   = "v$version"
+                  name       = "v$version"
+                  body       = "Release v$version"
+                  draft      = $false
+                  prerelease = $false
+              } | ConvertTo-Json
+              Method         = 'POST'
+              Authentication = 'Bearer'
+              Token          = $env:GH_TOKEN
+              ContentType    = 'application/json'
+          }
+          Invoke-RestMethod @postParams
           
       # - name: Publish to PowerShell Gallery
       #   env:
