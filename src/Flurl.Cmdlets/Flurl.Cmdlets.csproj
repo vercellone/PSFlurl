@@ -10,6 +10,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <OutputPath>$(MSBuildThisFileDirectory)../../lib</OutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PackageIcon>icon.png</PackageIcon>
 
     <!-- Version Information managed by GitVersion -->
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -25,6 +26,7 @@
     <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../Flurl.psd1" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../Flurl.types.ps1xml" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="AddDependencies" BeforeTargets="GenerateNuspec">

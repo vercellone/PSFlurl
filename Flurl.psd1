@@ -110,7 +110,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/vercellone/Flurl'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'icon.png'
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''
