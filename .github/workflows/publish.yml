@@ -8,34 +8,35 @@ jobs:
   publish-to-gallery:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug Release Info
-        env:
-          RELEASE_INFO: ${{ toJSON(github.event.release) }}
-        run: |
-          echo "Release Tag: ${{ github.event.release.tag_name }}"
-          echo "Full Release Info: $RELEASE_INFO"
-    
-      - name: Get Tag SHA
-        id: tag
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          SHA=$(gh api repos/${{ github.repository }}/git/refs/tags/${{ github.event.release.tag_name }} --jq .object.sha)
-          echo "sha=$SHA" >> $GITHUB_OUTPUT
-          echo "Tag ${{ github.event.release.tag_name }} points to: $SHA"
-
-      - name: Download Artifact from CI Run
-        uses: dawidd6/action-download-artifact@v3
+      - uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: ci.yml
-          workflow_conclusion: success
-          commit: ${{ steps.tag.outputs.sha }}
-          name: nupkg
-          path: artifacts
+          fetch-depth: 0
+          ref: ${{ github.event.release.tag_name }}
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.10.2
+        with:
+          versionSpec: '5.x'
+    
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+      
+      - name: Build and Pack
+        run: |
+          dotnet restore src/Flurl.Cmdlets/Flurl.Cmdlets.csproj
+          dotnet build src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release -p:Version=${{ steps.gitversion.outputs.semVer }}
+          dotnet pack src/Flurl.Cmdlets/Flurl.Cmdlets.csproj --configuration Release --output ./artifacts -p:Version=${{ steps.gitversion.outputs.semVer }}
+      
       - name: Publish to PowerShell Gallery
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
         run: |
-          dotnet nuget push ./artifacts/*.nupkg --api-key $NUGET_KEY --source https://www.powershellgallery.com/api/v2/package
+          dotnet nuget push ./artifacts/*.nupkg --api-key $env:NUGET_KEY --source https://www.powershellgallery.com/api/v2/package
