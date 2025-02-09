@@ -12,6 +12,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug Git Info
+        run: |
+          echo "Current branch: $(git branch --show-current)"
+          echo "Tags pointing at HEAD: $(git tag --points-at HEAD)"
+          echo "All tags: $(git tag -l)"
+          echo "Git describe: $(git describe --tags)"
+
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.10.2
         with:
