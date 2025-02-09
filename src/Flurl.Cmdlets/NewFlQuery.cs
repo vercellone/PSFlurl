@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using Flurl;
 using Flurl.Cmdlets.Attributes;
 using Flurl.Cmdlets.Extensions;
 using Flurl.Cmdlets.Utilities;
@@ -41,7 +40,7 @@ namespace Flurl.Cmdlets {
             QueryParamCollection fluentQuery = new QueryParamCollection();
 
             if (Query is QueryParamCollection collection) {
-                var kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
+                IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
                 fluentQuery.AddRange(kvpEnumerable, this.NullValueHandling);
             }
             else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable) {

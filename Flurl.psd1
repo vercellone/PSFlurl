@@ -60,7 +60,7 @@ PowerShellVersion = '7.4'
 # ScriptsToProcess = @()
 
 # Type files (.ps1xml) to be loaded when importing this module
-# TypesToProcess = @()
+TypesToProcess = 'Flurl.types.ps1xml'
 
 # Format files (.ps1xml) to be loaded when importing this module
 # FormatsToProcess = @()
@@ -87,8 +87,13 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList = 'lib/netstandard2.0/Flurl.Cmdlets.dll', 
-               'lib/netstandard2.0/Flurl.dll', 'LICENSE', 'README.md'
+FileList       = @(
+    'lib/netstandard2.0/Flurl.Cmdlets.dll', 
+    'lib/netstandard2.0/Flurl.dll',
+    'Flurl.types.ps1xml'
+    'LICENSE',
+    'README.md'
+)
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{

@@ -24,6 +24,7 @@
     <None Include="$(MSBuildThisFileDirectory)../../LICENSE" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../Flurl.psd1" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../../Flurl.types.ps1xml" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="AddDependencies" BeforeTargets="GenerateNuspec">

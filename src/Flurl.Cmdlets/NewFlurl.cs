@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
-using Flurl;
 using Flurl.Cmdlets.Attributes;
 using Flurl.Cmdlets.Utilities;
 using Flurl.Cmdlets.Extensions;
 
-namespace Flurl.Cmdlets
-{
+namespace Flurl.Cmdlets {
 
     [Cmdlet(VerbsCommon.New, "Flurl")]
     [OutputType(typeof(Url))]
     [OutputType(typeof(Uri))]
-    public class NewFlurlCommand : PSCmdlet
-    {
+    public class NewFlurl : PSCmdlet {
         /// <summary>
         /// <para type="description">The base URI to start with.</para>
         /// </summary>
@@ -104,9 +101,8 @@ namespace Flurl.Cmdlets
         [Parameter]
         public SwitchParameter AsString { get; set; }
 
-        protected override void ProcessRecord()
-        {
-            var url = Uri == null ? new Url() : new Url(Uri.ToString());
+        protected override void ProcessRecord() {
+            Url url = Uri == null ? new Url() : new Url(Uri.ToString());
 
             // Map simple parameters to properties
             var parameters = new (string Name, Action Action)[]
@@ -117,10 +113,8 @@ namespace Flurl.Cmdlets
             (nameof(Fragment), () => url.Fragment = Fragment),
             (nameof(Path), () => url.AppendPathSegments(Path))
             };
-            foreach (var parameter in parameters)
-            {
-                if (MyInvocation.BoundParameters.ContainsKey(parameter.Name))
-                {
+            foreach ((string Name, Action Action) parameter in parameters) {
+                if (MyInvocation.BoundParameters.ContainsKey(parameter.Name)) {
                     parameter.Action();
                 }
             }
@@ -128,47 +122,37 @@ namespace Flurl.Cmdlets
             // Set UserInfo
             // We don't accept PSCredential because it complicates the
             // UserName with no Password scenario.
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(UserName)))
-            {
-                if (MyInvocation.BoundParameters.ContainsKey(nameof(Password)))
-                {
-                    var password = new NetworkCredential(string.Empty, Password).Password;
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(UserName))) {
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(Password))) {
+                    string password = new NetworkCredential(string.Empty, Password).Password;
                     url.UserInfo = $"{UserName}:{password}";
                 }
-                else
-                {
+                else {
                     url.UserInfo = UserName;
                 }
             }
 
             // Query accepts a variety of types, which are mostly handled
             // by the the FluentQueryTransformAttribute
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(Query)))
-            {
-                if (Query is QueryParamCollection collection)
-                {
-                    var kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Query))) {
+                if (Query is QueryParamCollection collection) {
+                    IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
                     url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
-                else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable)
-                {
+                else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable) {
                     url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
-                else
-                {
+                else {
                     WriteError(new ErrorRecord(new ArgumentException("Query must be a string, IDictionary, NameValueCollection, array of IDictionary, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
                 }
             }
-            if (AsString.IsPresent || EncodeSpaceAsPlus.IsPresent)
-            {
+            if (AsString.IsPresent || EncodeSpaceAsPlus.IsPresent) {
                 WriteObject(url.ToString(EncodeSpaceAsPlus.IsPresent));
             }
-            else if (AsUri.IsPresent)
-            {
+            else if (AsUri.IsPresent) {
                 WriteObject(url.ToUri());
             }
-            else
-            {
+            else {
                 WriteObject(url);
             }
         }

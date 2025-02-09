@@ -19,7 +19,7 @@ namespace Flurl.Cmdlets.Attributes {
             }
 
             if (query is string queryString) {
-                 // The Cmdlets rebuild params from scratch to honor NullValueHandling
+                // The Cmdlets rebuild params from scratch to honor NullValueHandling
                 return new QueryParamCollection(queryString);
             }
 
