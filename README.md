@@ -35,7 +35,7 @@ New-Flurl -Uri 'https://api.example.com' -Query @{
     filter = 'active'
 } -AsString
 
-https://api.example.com?search=powershell%20module&filter=active
+https://api.example.com/?filter=active&search=powershell%20module
 ```
 
 #### Using `+` encoding for spaces
@@ -45,7 +45,7 @@ New-Flurl -Uri 'https://api.example.com' -Query @{
     search = 'powershell module'
 } -EncodeSpaceAsPlus -AsString
 
-https://api.example.com?search=powershell+module
+https://api.example.com/?search=powershell+module
 ```
 
 ### Handling Null Values
@@ -55,7 +55,7 @@ https://api.example.com?search=powershell+module
 New-FlQuery -Query @{
     required = 'value'
     optional = $null
-} -NullValueHandling Remove
+} -NullValueHandling Remove -AsString
 
 required=value
 ```
@@ -65,8 +65,9 @@ required=value
 New-FlQuery -Query @{
     required = 'value'
     optional = $null
-} -NullValueHandling Ignore
-required=value&optional=
+} -NullValueHandling Ignore -AsString
+
+optional=&required=value
 ```
 
 #### NameOnly
@@ -74,9 +75,9 @@ required=value&optional=
 New-FlQuery -Query @{
     required = 'value'
     optional = $null
-} -NullValueHandling Remove
+} -NullValueHandling NameOnly -AsString
 
-required=value&optional
+optional&required=value
 ```
 
 ### Duplicate Query Parameters
@@ -107,7 +108,7 @@ tag=powershell&tag=module
 $splat = @{
     Uri               = 'https://api.example.com'
     Path              = @('v2', 'search')
-    Query             = @{
+    Query             = [ordered]@{
         q      = 'test query'
         filter = 'active'
         sort   = 'relevance'
@@ -118,7 +119,7 @@ $splat = @{
 }
 New-Flurl @splat
 
-https://api.example.com/v2/search?q=test+query&filter=active&sort=relevance#results
+https://api.example.com/v2/search?q=test+query&sort=relevance&filter=active#results
 ```
 
 ## Installation
