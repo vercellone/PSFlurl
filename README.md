@@ -88,7 +88,7 @@ optional&required=value
 ```powershell
 New-FlQuery -Query @(
     @{ state = 'OPEN' },
-    @{ staet = 'MERGED' }
+    @{ state = 'MERGED' }
 ) -AsString
 
 state=OPEN&state=MERGED
