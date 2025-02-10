@@ -67,6 +67,32 @@ Describe 'PSFlurl' {
         }
     }
 
+    Context 'New-Flurl Parameter Sets' {
+        BeforeAll {
+            $baseUri = 'https://api.example.com'
+            $queryParams = @{ key = 'value'; empty = $null }
+        }
+
+        It 'should work with NO input (default)' {
+            $result = New-Flurl
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be ''
+        }
+
+        It 'should work with ValueFromPipeline [QueryParamCollection]' {
+            $query = New-FlQuery -Query $queryParams
+            $result = $query | New-Flurl -Uri $baseUri
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be "$baseUri`?key=value"
+        }
+
+        It 'should combine Uri and Query parameters correctly' {
+            $result = New-Flurl -Uri $baseUri -Query $queryParams
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be "$baseUri`?key=value"
+        }
+    }
+
     Context 'Type Conversion' {
 
         BeforeAll {

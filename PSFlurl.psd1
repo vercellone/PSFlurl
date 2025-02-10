@@ -81,7 +81,8 @@ CmdletsToExport = 'New-FlQuery', 'New-Flurl'
 # VariablesToExport = @()
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = @()
+# By exporting Get-* aliases we get FlQuery and Flurl aliases for free.
+AliasesToExport = 'Get-FlQuery', 'Get-Flurl'
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()

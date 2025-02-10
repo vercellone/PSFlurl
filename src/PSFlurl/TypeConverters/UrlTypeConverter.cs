@@ -21,7 +21,7 @@ namespace PSFlurl.TypeConverters {
             if (value is string str)
                 return new Url(str);
             if (value is Uri uri)
-                return new Url(uri.ToString());
+                return new Url(uri);
             return base.ConvertFrom(context, culture, value);
         }
 

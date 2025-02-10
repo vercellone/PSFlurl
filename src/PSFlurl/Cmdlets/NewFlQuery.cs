@@ -8,6 +8,7 @@ using PSFlurl.Utilities;
 
 namespace PSFlurl.Cmdlets {
     [Cmdlet(VerbsCommon.New, "FlQuery")]
+    [Alias("Get-FlQuery")]
     [OutputType(typeof(string))]
     [OutputType(typeof(QueryParamCollection))]
     public class NewFlQueryCommand : PSCmdlet {
