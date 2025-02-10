@@ -1,10 +1,7 @@
 {
     "name": "PowerShell Development Container",
     "build": {
-        "dockerfile": "Dockerfile",
-        "args": {
-            "VARIANT": "latest"
-        }
+        "dockerfile": "Dockerfile"
     },
     "customizations": {
         "vscode": {
