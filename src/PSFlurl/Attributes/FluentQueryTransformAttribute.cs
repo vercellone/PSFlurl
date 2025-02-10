@@ -43,10 +43,29 @@ namespace PSFlurl.Attributes {
                     }
                     break;
 
-                case object obj when obj.GetType().Name.StartsWith("ValueTuple`2"):
-                    throw new ArgumentTransformationMetadataException(
-                        "QueryParamCollection was enumerated. To pipe a stored QueryParamCollection, use (prepend) the comma operator: ,$query | New-Flurl"
-                    );
+                case object obj when obj.GetType().Name.StartsWith("ValueTuple`2") || obj.GetType().Name.StartsWith("Tuple`2"):
+                    Type tupleType = obj.GetType();
+                    string item1 = tupleType.GetField("Item1")?.GetValue(obj)?.ToString() ??
+                                  tupleType.GetProperty("Item1")?.GetValue(obj)?.ToString();
+                    object item2 = tupleType.GetField("Item2")?.GetValue(obj) ??
+                                  tupleType.GetProperty("Item2")?.GetValue(obj);
+                    if (item1 != null) {
+                        qcpFromQuery.AddRange(new[] { new KeyValuePair<string, object>(item1, item2) }, NullValueHandling.Ignore);
+                    }
+                    break;
+
+                case IEnumerable<object> enumObj when enumObj.All(x =>
+                    x.GetType().Name.StartsWith("ValueTuple`2") || x.GetType().Name.StartsWith("Tuple`2")):
+                    IEnumerable<KeyValuePair<string, object>> kvps = enumObj.Select(tuple => {
+                        Type enumTupleType = tuple.GetType();
+                        string enumItem1 = enumTupleType.GetField("Item1")?.GetValue(tuple)?.ToString() ??
+                                       enumTupleType.GetProperty("Item1")?.GetValue(tuple)?.ToString();
+                        object enumItem2 = enumTupleType.GetField("Item2")?.GetValue(tuple) ??
+                                       enumTupleType.GetProperty("Item2")?.GetValue(tuple);
+                        return new KeyValuePair<string, object>(enumItem1, enumItem2);
+                    }).Where(kvp => kvp.Key != null);
+                    qcpFromQuery.AddRange(kvps, NullValueHandling.Ignore);
+                    break;
 
                 case IEnumerable<KeyValuePair<string, object>> kvp:
                     qcpFromQuery.AddRange(kvp, NullValueHandling.Ignore);
@@ -61,6 +80,10 @@ namespace PSFlurl.Attributes {
                     qcpFromQuery.AddRange(nvc.AllKeys.SelectMany(key =>
                         nvc.GetValues(key).Select(value =>
                             new KeyValuePair<string, object>(key, value))), NullValueHandling.Ignore);
+                    break;
+
+                case Url url:
+                    qcpFromQuery = url.QueryParams;
                     break;
 
                 default:

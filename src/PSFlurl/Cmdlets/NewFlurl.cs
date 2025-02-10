@@ -7,6 +7,7 @@ using Flurl;
 using PSFlurl.Attributes;
 using PSFlurl.Utilities;
 using PSFlurl.Extensions;
+using System.Linq;
 
 namespace PSFlurl.Cmdlets {
 
@@ -16,6 +17,8 @@ namespace PSFlurl.Cmdlets {
     [OutputType(typeof(Uri))]
     [OutputType(typeof(Url))]
     public class NewFlurl : PSCmdlet {
+        private Url _url = new Url();
+
         /// <summary>
         /// <para type="description">The base URI to start with.</para>
         /// </summary>
@@ -105,19 +108,23 @@ namespace PSFlurl.Cmdlets {
         [Parameter]
         public SwitchParameter AsString { get; set; }
 
+        protected override void BeginProcessing() {
+            base.BeginProcessing();
+        }
+
         protected override void ProcessRecord() {
-            if (Url == null) {
-                Url = new Url();
+            if (Url != null) {
+                _url = Url;
             }
 
             // Map simple parameters to properties
             var parameters = new (string Name, Action Action)[]
             {
-                (nameof(HostName), () => Url.Host = HostName),
-                (nameof(Scheme), () => Url.Scheme = Scheme),
-                (nameof(Port), () => Url.Port = Port),
-                (nameof(Fragment), () => Url.Fragment = Fragment),
-                (nameof(Path), () => Url.AppendPathSegments(Path))
+                (nameof(HostName), () => _url.Host = HostName),
+                (nameof(Scheme), () => _url.Scheme = Scheme),
+                (nameof(Port), () => _url.Port = Port),
+                (nameof(Fragment), () => _url.Fragment = Fragment),
+                (nameof(Path), () => _url.AppendPathSegments(Path))
             };
             foreach ((string Name, Action Action) parameter in parameters) {
                 if (MyInvocation.BoundParameters.ContainsKey(parameter.Name)) {
@@ -131,35 +138,69 @@ namespace PSFlurl.Cmdlets {
             if (MyInvocation.BoundParameters.ContainsKey(nameof(UserName))) {
                 if (MyInvocation.BoundParameters.ContainsKey(nameof(Password))) {
                     string password = new NetworkCredential(string.Empty, Password).Password;
-                    Url.UserInfo = $"{UserName}:{password}";
+                    _url.UserInfo = $"{UserName}:{password}";
                 }
                 else {
-                    Url.UserInfo = UserName;
+                    _url.UserInfo = UserName;
                 }
             }
 
             // Query accepts a variety of types, which are mostly handled
-            // by the the FluentQueryTransformAttribute
+            // by the FluentQueryTransformAttribute
             if (MyInvocation.BoundParameters.ContainsKey(nameof(Query))) {
                 if (Query is QueryParamCollection collection) {
                     IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
-                    Url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
+                    _url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
                 }
                 else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable) {
-                    Url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
+                    _url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
+                }
+                else if (Query.GetType().Name.StartsWith("ValueTuple`2") || Query.GetType().Name.StartsWith("Tuple`2")) {
+                    Type tupleType = Query.GetType();
+                    string item1 = tupleType.GetField("Item1").GetValue(Query)?.ToString();
+                    object item2 = tupleType.GetField("Item2").GetValue(Query);
+                    if (item1 != null) {
+                        _url.QueryParams.Add(item1, item2, false, this.NullValueHandling);
+                    }
                 }
                 else {
-                    WriteError(new ErrorRecord(new ArgumentException($"Query ({Query.GetType().FullName}) must be string(s), IDictionary(s), NameValueCollection, QueryParamCollection, or IEnumerable<KeyValuePair<string, object>>"), "InvalidArgument", ErrorCategory.InvalidArgument, Query));
+                    WriteError(new ErrorRecord(
+                        new ArgumentException($"Query ({Query.GetType().FullName}) must be string(s), IDictionary(s), NameValueCollection, QueryParamCollection, Tuple, or IEnumerable<KeyValuePair<string, object>>"),
+                        "InvalidArgument",
+                        ErrorCategory.InvalidArgument,
+                        Query));
                 }
             }
+
+            // Only output immediately if we're not using the pipeline
+            if (!MyInvocation.BoundParameters.ContainsKey(nameof(Query)) ||
+                !GetType().GetProperty(nameof(Query)).GetCustomAttributes(typeof(ParameterAttribute), true)
+                    .Cast<ParameterAttribute>()
+                    .Any(a => a.ValueFromPipeline)) {
+                OutputResult();
+            }
+        }
+
+        protected override void EndProcessing() {
+            // Only params accumulated from the pipeline
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Query)) &&
+                GetType().GetProperty(nameof(Query)).GetCustomAttributes(typeof(ParameterAttribute), true)
+                    .Cast<ParameterAttribute>()
+                    .Any(a => a.ValueFromPipeline)) {
+                OutputResult();
+            }
+            base.EndProcessing();
+        }
+
+        private void OutputResult() {
             if (AsString.IsPresent || EncodeSpaceAsPlus.IsPresent) {
-                WriteObject(Url.ToString(EncodeSpaceAsPlus.IsPresent));
+                WriteObject(_url.ToString(EncodeSpaceAsPlus.IsPresent));
             }
             else if (AsUri.IsPresent) {
-                WriteObject(Url.ToUri());
+                WriteObject(_url.ToUri());
             }
             else {
-                WriteObject(Url);
+                WriteObject(_url);
             }
         }
     }

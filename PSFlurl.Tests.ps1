@@ -67,7 +67,49 @@ Describe 'PSFlurl' {
         }
     }
 
-    Context 'New-Flurl Parameter Sets' {
+    Context 'New-FlQuery ValueFromPipeline' {
+        BeforeAll {
+            $queryParams = @{ key = 'value'; empty = $null }
+        }
+
+        It 'should work with NO input (default)' {
+            $result = New-FlQuery
+            $result.ToString() | Should -Be ''
+        }
+
+        It 'should work when pipeing directly from New-FlQuery | New-FlQuery' {
+            $result = New-FlQuery -Query $queryParams | New-FlQuery
+            $result.ToString() | Should -Be 'key=value'
+        }
+
+        It 'should work when pipeing a stored variable $q | New-FlQuery' {
+            $query = New-FlQuery -Query $queryParams
+            $result = $query | New-FlQuery
+            $result.ToString() | Should -Be 'key=value'
+        }
+
+        It 'should work when using comma operator with stored variable' {
+            $query = New-FlQuery -Query $queryParams
+            $result = , $query | New-FlQuery
+            $result.ToString() | Should -Be 'key=value'
+        }
+
+        It 'should work with tuples from pipeline' {
+            $result = @(
+                [tuple]::Create('key1', 'value1'),
+                [tuple]::Create('key2', 'value2')
+            ) | New-FlQuery
+            $result.ToString() | Should -Be 'key1=value1&key2=value2'
+        }
+
+        It 'should work with single tuple from pipeline' {
+            $result = [tuple]::Create('key', 'value') | New-FlQuery
+            $result.ToString() | Should -Be 'key=value'
+        }
+        
+    }
+
+    Context 'New-Flurl Query ValueFromPipeline' {
         BeforeAll {
             $baseUri = 'https://api.example.com'
             $queryParams = @{ key = 'value'; empty = $null }
@@ -85,16 +127,11 @@ Describe 'PSFlurl' {
             $result.ToString() | Should -Be "$baseUri`?key=value"
         }
 
-        It 'should throw when pipeing a stored variable $q | New-Flurl' {
-            try {
-                $query = New-FlQuery -Query $queryParams
-                $ErrorActionPreference = 'Stop'
-                $query | New-Flurl -ErrorAction Stop
-                Should -Fail "Expected error was not thrown"
-            }
-            catch {
-                $_.Exception.Message | Should -Match 'use \(prepend\) the comma operator'
-            }
+        It 'should work when pipeing a stored variable $q | New-Flurl' {
+            $query = New-FlQuery -Query $queryParams
+            $result = $query | New-Flurl -Uri $baseUri
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be "$baseUri`?key=value"
         }
 
         It 'should work when using comma operator with stored variable' {
@@ -103,6 +140,24 @@ Describe 'PSFlurl' {
             $result | Should -BeOfType ([Flurl.Url])
             $result.ToString() | Should -Be "$baseUri`?key=value"
         }
+
+        It 'should work with tuples from pipeline' {
+            $result = @(
+                [tuple]::Create('key1', 'value1'),
+                [tuple]::Create('key2', 'value2')
+            ) | New-Flurl -Uri $baseUri
+        
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be "$baseUri`?key1=value1&key2=value2"
+        }
+
+        It 'should work with single tuple from pipeline' {
+            $result = [tuple]::Create('key', 'value') | New-Flurl -Uri $baseUri
+        
+            $result | Should -BeOfType ([Flurl.Url])
+            $result.ToString() | Should -Be "$baseUri`?key=value"
+        }
+        
     }
 
     Context 'Type Conversion' {
