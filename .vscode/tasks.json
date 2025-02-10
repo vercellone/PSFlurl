@@ -5,7 +5,20 @@
             "label": "Import PSFlurl Module",
             "type": "shell",
             "command": "Import-Module -Name '${workspaceFolder}/PSFlurl.psd1' -Force -Verbose",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": [
+                "dotnet: build"
+            ]
+        },
+        {
+            "type": "dotnet",
+            "task": "build",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "dotnet: build",
+            "options": {
+                "args": ["src/PSFlurl/PSFlurl.csproj","--configuration", "Release"]
+            }
         }
     ]
 }
