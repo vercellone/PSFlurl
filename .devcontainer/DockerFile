@@ -13,9 +13,3 @@ SHELL ["pwsh", "-Command"]
 
 # Set the working directory
 WORKDIR /workspaces/PSFlurl
-
-# Copy the module to the container
-COPY . /workspaces/PSFlurl
-
-# Import the module
-RUN pwsh -c 'Import-Module /workspaces/PSFlurl/PSFlurl.psd1'

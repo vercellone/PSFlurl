@@ -15,5 +15,11 @@
     },
     "postCreateCommand": "pwsh -c 'Import-Module /workspaces/PSFlurl/Flurl.psd1'",
     "remoteUser": "vscode",
-    "workspaceFolder": "/workspaces/PSFlurl"
+    "workspaceFolder": "/workspaces/PSFlurl",
+    "features": {
+        "ghcr.io/devcontainers/features/powershell:1": {
+            "version": "latest"
+        },
+        "ghcr.io/natescherer/devcontainers-custom-features/powershell-resources:1": {}
+    }
 }
