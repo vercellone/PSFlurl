@@ -79,15 +79,27 @@ Describe 'PSFlurl' {
             $result.ToString() | Should -Be ''
         }
 
-        It 'should work with ValueFromPipeline [QueryParamCollection]' {
-            $query = New-FlQuery -Query $queryParams
-            $result = $query | New-Flurl -Uri $baseUri
+        It 'should work when pipeing directly from New-FlQuery | New-Flurl' {
+            $result = New-FlQuery -Query $queryParams | New-Flurl -Uri $baseUri
             $result | Should -BeOfType ([Flurl.Url])
             $result.ToString() | Should -Be "$baseUri`?key=value"
         }
 
-        It 'should combine Uri and Query parameters correctly' {
-            $result = New-Flurl -Uri $baseUri -Query $queryParams
+        It 'should throw when pipeing a stored variable $q | New-Flurl' {
+            try {
+                $query = New-FlQuery -Query $queryParams
+                $ErrorActionPreference = 'Stop'
+                $query | New-Flurl -ErrorAction Stop
+                Should -Fail "Expected error was not thrown"
+            }
+            catch {
+                $_.Exception.Message | Should -Match 'use \(prepend\) the comma operator'
+            }
+        }
+
+        It 'should work when using comma operator with stored variable' {
+            $query = New-FlQuery -Query $queryParams
+            $result = , $query | New-Flurl -Uri $baseUri
             $result | Should -BeOfType ([Flurl.Url])
             $result.ToString() | Should -Be "$baseUri`?key=value"
         }

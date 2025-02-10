@@ -57,8 +57,7 @@ namespace PSFlurl.Cmdlets {
                 WriteObject(fluentQuery.ToString(EncodeSpaceAsPlus.IsPresent));
             }
             else {
-                // Wrap in an array for better pipeline experience
-                WriteObject(new object[] { fluentQuery });
+                WriteObject(fluentQuery, false);
             }
         }
     }

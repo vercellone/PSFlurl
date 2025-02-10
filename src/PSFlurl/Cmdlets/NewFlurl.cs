@@ -10,9 +10,7 @@ using PSFlurl.Extensions;
 
 namespace PSFlurl.Cmdlets {
 
-    // DefaultParameterSetName = "None" is required to allow usage with no parameters.
-    // The Uri and Query ParameterSets facilitate either (but not both) to accept ValueFromPipeline.
-    [Cmdlet(VerbsCommon.New, "Flurl", DefaultParameterSetName = "NoPipelineInput")]
+    [Cmdlet(VerbsCommon.New, "Flurl")]
     [Alias("Get-Flurl")]
     [OutputType(typeof(string))]
     [OutputType(typeof(Uri))]
@@ -58,7 +56,7 @@ namespace PSFlurl.Cmdlets {
         /// <summary>
         /// <para type="description">The query parameters to add to the URI.</para>
         /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
         [FluentQueryTransform()]
         public object Query { get; set; }
 
@@ -107,21 +105,9 @@ namespace PSFlurl.Cmdlets {
         [Parameter]
         public SwitchParameter AsString { get; set; }
 
-        /// <summary>
-        /// <para type="description">The query parameters to add to the URI.</para>
-        /// </summary>
-        [Parameter(DontShow = true, Mandatory = true, ParameterSetName = "FlQuery", ValueFromPipeline = true)]
-        public QueryParamCollection FlQuery { get; set; }
-
         protected override void ProcessRecord() {
             if (Url == null) {
                 Url = new Url();
-            }
-
-            // Handle QueryParamCollection ValueFromPipeline
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(FlQuery))) {
-                IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(FlQuery);
-                Url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
             }
 
             // Map simple parameters to properties

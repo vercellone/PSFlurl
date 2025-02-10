@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Management.Automation;
 using Flurl;
+using PSFlurl.Extensions;
 
 namespace PSFlurl.Attributes {
     [AttributeUsage(AttributeTargets.Property)]
@@ -14,42 +15,60 @@ namespace PSFlurl.Attributes {
         }
 
         private static object TransformQuery(object query) {
+            // Unwrap PSObject, if applicable
             if (query is PSObject psObject) {
-                if (psObject.BaseObject is QueryParamCollection unwrappedQueryParamCollection) {
-                    return unwrappedQueryParamCollection;
-                }
-                if (psObject.BaseObject is object[] objectArray && objectArray.Length > 0 && objectArray[0] is QueryParamCollection) {
-                    return objectArray[0] as QueryParamCollection;
-                }
-            } 
-
-            if (query is object[] stringArray && stringArray.Length > 0 && stringArray[0] is string) {
-                query = string.Join("&", stringArray); // Bit of a hack; The Cmdlets rebuild params from scratch to honor NullValueHandling
+                query = psObject.BaseObject;
             }
 
-            if (query is string queryString) {
-                // The Cmdlets rebuild params from scratch to honor NullValueHandling
-                return new QueryParamCollection(queryString);
+            // Return QueryParamCollection as-is
+            if (query is QueryParamCollection qpc) {
+                return qpc;
             }
 
-            if (query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable) {
-                return kvpEnumerable;
-            }
+            // Convert known types to QueryParamCollection
+            var qcpFromQuery = new QueryParamCollection();
+            switch (query) {
+                case string queryString:
+                    qcpFromQuery = new QueryParamCollection(queryString);
+                    break;
 
-            if (query is IDictionary dictionary) {
-                return dictionary.Cast<DictionaryEntry>().Select(entry => new KeyValuePair<string, object>(entry.Key.ToString(), entry.Value));
-            }
+                case object[] array when array.Length > 0 && array[0] is string:
+                    qcpFromQuery = new QueryParamCollection(string.Join("&", array));
+                    break;
 
-            if (query is NameValueCollection nameValueCollection) {
-                return nameValueCollection.AllKeys.SelectMany(key => nameValueCollection.GetValues(key)
-                    .Select(value => new KeyValuePair<string, object>(key, value)));
+                case object[] array when array.Length > 0 && array[0] is IDictionary:
+                    foreach (IDictionary dict in array.Cast<IDictionary>()) {
+                        qcpFromQuery.AddRange(dict.Cast<DictionaryEntry>()
+                            .Select(e => new KeyValuePair<string, object>(e.Key.ToString(), e.Value)), NullValueHandling.Ignore);
+                    }
+                    break;
+
+                case object obj when obj.GetType().Name.StartsWith("ValueTuple`2"):
+                    throw new ArgumentTransformationMetadataException(
+                        "QueryParamCollection was enumerated. To pipe a stored QueryParamCollection, use (prepend) the comma operator: ,$query | New-Flurl"
+                    );
+
+                case IEnumerable<KeyValuePair<string, object>> kvp:
+                    qcpFromQuery.AddRange(kvp, NullValueHandling.Ignore);
+                    break;
+
+                case IDictionary dict:
+                    qcpFromQuery.AddRange(dict.Cast<DictionaryEntry>()
+                        .Select(e => new KeyValuePair<string, object>(e.Key.ToString(), e.Value)), NullValueHandling.Ignore);
+                    break;
+
+                case NameValueCollection nvc:
+                    qcpFromQuery.AddRange(nvc.AllKeys.SelectMany(key =>
+                        nvc.GetValues(key).Select(value =>
+                            new KeyValuePair<string, object>(key, value))), NullValueHandling.Ignore);
+                    break;
+
+                default:
+                    Console.WriteLine("Unhandled type: " + query.GetType().FullName);
+                    // Return unhandled types as-is
+                    return query;
             }
-            if (query is object[] array && array.Length > 0 && array[0] is IDictionary) {
-                return array.Cast<IDictionary>().SelectMany(dict => dict.Cast<DictionaryEntry>()
-                    .Select(entry => new KeyValuePair<string, object>(entry.Key.ToString(), entry.Value)));
-            }
-            return query;
+            return qcpFromQuery;
         }
-
     }
 }
