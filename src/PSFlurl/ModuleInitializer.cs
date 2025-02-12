@@ -6,9 +6,10 @@ using PSFlurl.TypeConverters;
 namespace PSFlurl {
     public class ModuleInitializer : IModuleAssemblyInitializer {
         public void OnImport() {
-            var typeConverter = new UrlTypeConverter();
-            var attribute = new TypeConverterAttribute(typeof(UrlTypeConverter));
-            TypeDescriptor.AddAttributes(typeof(Url), attribute);
+            var queryConverterAttribute = new TypeConverterAttribute(typeof(QueryTypeConverter));
+            var urlConverterAttribute = new TypeConverterAttribute(typeof(UrlTypeConverter));
+            TypeDescriptor.AddAttributes(typeof(QueryParamCollection), queryConverterAttribute);
+            TypeDescriptor.AddAttributes(typeof(Url), urlConverterAttribute);
         }
     }
 }

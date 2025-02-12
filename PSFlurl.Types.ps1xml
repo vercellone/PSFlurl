@@ -6,4 +6,10 @@
             <TypeName>PSFlurl.TypeConverters.UrlTypeConverter</TypeName>
         </TypeConverter>
     </Type>
+        <Type>
+        <Name>Flurl.QueryParamCollection</Name>
+        <TypeConverter>
+            <TypeName>PSFlurl.TypeConverters.QueryTypeConverter</TypeName>
+        </TypeConverter>
+    </Type>
 </Types>

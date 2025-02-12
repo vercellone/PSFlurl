@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
 using Flurl;
 using PSFlurl.Attributes;
-using PSFlurl.Utilities;
-using PSFlurl.Extensions;
-using System.Linq;
 
 namespace PSFlurl.Cmdlets {
 
@@ -61,7 +57,7 @@ namespace PSFlurl.Cmdlets {
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
         [FluentQueryTransform()]
-        public object Query { get; set; }
+        public QueryParamCollection Query { get; set; }
 
         /// <summary>
         /// <para type="description">The fragment to add to the URI.</para>
@@ -145,54 +141,15 @@ namespace PSFlurl.Cmdlets {
                 }
             }
 
-            // Query accepts a variety of types, which are mostly handled
-            // by the FluentQueryTransformAttribute
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(Query))) {
-                if (Query is QueryParamCollection collection) {
-                    IEnumerable<KeyValuePair<string, object>> kvpEnumerable = QueryParamCollectionConverter.ConvertToKeyValuePairs(collection);
-                    _url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
+            if (Query != null) {
+                foreach ((string Name, object Value) in Query) {
+                    object val = Value != null && string.IsNullOrWhiteSpace($"{Value}") ? null : Value;
+                    _url.QueryParams.Add(Name, val, false, NullValueHandling);
                 }
-                else if (Query is IEnumerable<KeyValuePair<string, object>> kvpEnumerable) {
-                    _url.QueryParams.AddRange(kvpEnumerable, this.NullValueHandling);
-                }
-                else if (Query.GetType().Name.StartsWith("ValueTuple`2") || Query.GetType().Name.StartsWith("Tuple`2")) {
-                    Type tupleType = Query.GetType();
-                    string item1 = tupleType.GetField("Item1").GetValue(Query)?.ToString();
-                    object item2 = tupleType.GetField("Item2").GetValue(Query);
-                    if (item1 != null) {
-                        _url.QueryParams.Add(item1, item2, false, this.NullValueHandling);
-                    }
-                }
-                else {
-                    WriteError(new ErrorRecord(
-                        new ArgumentException($"Query ({Query.GetType().FullName}) must be string(s), IDictionary(s), NameValueCollection, QueryParamCollection, Tuple, or IEnumerable<KeyValuePair<string, object>>"),
-                        "InvalidArgument",
-                        ErrorCategory.InvalidArgument,
-                        Query));
-                }
-            }
-
-            // Only output immediately if we're not using the pipeline
-            if (!MyInvocation.BoundParameters.ContainsKey(nameof(Query)) ||
-                !GetType().GetProperty(nameof(Query)).GetCustomAttributes(typeof(ParameterAttribute), true)
-                    .Cast<ParameterAttribute>()
-                    .Any(a => a.ValueFromPipeline)) {
-                OutputResult();
             }
         }
 
         protected override void EndProcessing() {
-            // Only params accumulated from the pipeline
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(Query)) &&
-                GetType().GetProperty(nameof(Query)).GetCustomAttributes(typeof(ParameterAttribute), true)
-                    .Cast<ParameterAttribute>()
-                    .Any(a => a.ValueFromPipeline)) {
-                OutputResult();
-            }
-            base.EndProcessing();
-        }
-
-        private void OutputResult() {
             if (AsString.IsPresent || EncodeSpaceAsPlus.IsPresent) {
                 WriteObject(_url.ToString(EncodeSpaceAsPlus.IsPresent));
             }
