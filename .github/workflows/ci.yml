@@ -160,14 +160,17 @@ jobs:
       - name: Publish to PowerShell Gallery
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
+        shell: pwsh
         run: |
+          # Extract the nupkg to get module files
           $nupkg = Get-ChildItem ./artifacts/PSFlurl*.nupkg
           $extractPath = Join-Path ./artifacts 'PSFlurl'
           Expand-Archive -Path $nupkg -DestinationPath $extractPath -Force
+          
+          # Remove NuGet specific files that break PowerShell Gallery publishing
           Get-ChildItem -Path $extractPath -Recurse -File |
-              Where-Object { $_.Extension -eq '.xml' } |
-              Remove-Item -Force
-          Write-Host "Extracted module to: $extractPath"
-          Write-Host "Publishing package: $($nupkg.FullName)"
-          Publish-Module -NuGetApiKey ${{ env.NUGET_KEY }} -Path $extractPath -Repository PSGallery -Force -Verbose
-        shell: pwsh
+              Where-Object { $_.Extension -eq '.xml' -or $_.Name -eq '_rels' -or $_.Name -eq 'package' } |
+              Remove-Item -Force -Recurse
+          
+          Write-Host "Publishing from directory: $extractPath"
+          Publish-Module -Path $extractPath -NuGetApiKey ${{ env.NUGET_KEY }} -Repository PSGallery -Force -Verbose
