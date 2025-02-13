@@ -88,7 +88,7 @@ jobs:
           Get-ChildItem -File -Recurse | Where-Object { $_.Extension -eq '.nupkg' } | Select-Object -ExpandProperty FullName
           $nupkg = Get-ChildItem ./artifacts/*.nupkg
           $extractPath = Join-Path ./artifacts 'PSFlurl'
-          Expand-Archive -Path $nupkg -DestinationPath $extractPath
+          Expand-Archive -Path $nupkg -DestinationPath $extractPath -Force
           Write-Host "Extracted module to: $extractPath"
       
       - name: Install Pester
