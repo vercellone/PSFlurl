@@ -157,16 +157,17 @@ jobs:
           }
           Invoke-RestMethod @assetParams
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '9.0.x'
-          
       - name: Publish to PowerShell Gallery
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
         run: |
-          $nupkg = Get-ChildItem ./artifacts/PSFlurl.*.nupkg
+          $nupkg = Get-ChildItem ./artifacts/PSFlurl*.nupkg
+          $extractPath = Join-Path ./artifacts 'PSFlurl'
+          Expand-Archive -Path $nupkg -DestinationPath $extractPath -Force
+          Get-ChildItem -Path $extractPath -Recurse -File |
+              Where-Object { $_.Extension -eq '.xml' } |
+              Remove-Item -Force
+          Write-Host "Extracted module to: $extractPath"
           Write-Host "Publishing package: $($nupkg.FullName)"
-          dotnet nuget push $nupkg.FullName --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
+          Publish-Module -NuGetApiKey ${{ env.NUGET_KEY }} -Path $extractPath -Repository PSGallery -Force -Verbose
         shell: pwsh
