@@ -80,13 +80,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nupkg
-          path: PSFlurl
+          path: artifacts
 
       - name: Extract Module
         shell: pwsh
         run: |
-          $nupkg = Get-ChildItem ./PSFlurl/*.nupkg
-          $extractPath = Join-Path ./PSFlurl 'PSFlurl'
+          $nupkg = Get-ChildItem ./artifacts/*.nupkg
+          $extractPath = Join-Path ./artifacts 'PSFlurl'
           Expand-Archive -Path $nupkg -DestinationPath $extractPath
           Write-Host "Extracted module to: $extractPath"
       
@@ -99,7 +99,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module Pester -Force -PassThru
-          Import-Module ./PSFlurl/PSFlurl/PSFlurl.psd1 -Force -Verbose
+          Import-Module ./artifacts/PSFlurl/PSFlurl.psd1 -Force -Verbose
           $config = [PesterConfiguration]::Default
           $config.Run.Path = './tests/PSFlurl.Tests.ps1'
           $config.Output.Verbosity = 'Detailed'
@@ -116,14 +116,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nupkg
-          path: PSFlurl
+          path: artifacts
 
       - name: Create Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $nupkg = Get-ChildItem ./PSFlurl/PSFlurl.*.nupkg
+          $nupkg = Get-ChildItem ./artifacts/PSFlurl.*.nupkg
           $version = $nupkg.BaseName -replace 'PSFlurl\.'
           Write-Host "Version: $version"
           $secureToken = $env:GH_TOKEN | ConvertTo-SecureString -AsPlainText -Force
@@ -160,4 +160,4 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
         run: |
-          dotnet nuget push ./PSFlurl/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
+          dotnet nuget push ./artifacts/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
