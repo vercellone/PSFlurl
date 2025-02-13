@@ -45,4 +45,11 @@
       <PackagePath>$(TargetFramework)</PackagePath>
     </Content>
   </ItemGroup>
+
+  <Target Name="CopyDependencies" AfterTargets="Build">
+    <ItemGroup>
+      <DependencyFiles Include="$(OutDir)\*Flurl.dll" Exclude="$(OutDir)\$(AssemblyName).dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DependencyFiles)" DestinationFolder="$(OutDir)" />
+  </Target>
 </Project>

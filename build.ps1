@@ -1,7 +1,7 @@
 param(
     [Parameter()]
     [ValidateSet('Debug', 'Release')]
-    [string]$Configuration = 'Release',
+    [string]$Configuration = 'Debug',
 
     [Parameter()]
     [string]$Version = '0.0.1'
