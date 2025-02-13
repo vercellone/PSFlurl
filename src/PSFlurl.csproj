@@ -16,7 +16,7 @@
     <BuildOutputTargetFolder>.</BuildOutputTargetFolder>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IncludeBuildOutput>true</IncludeBuildOutput>
-    <NoWarn>NU5100</NoWarn>
+    <NoWarn>NU5100,NU5118</NoWarn>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -43,6 +43,11 @@
     <Content Include="$(OutDir)\*Flurl.dll">
       <Pack>true</Pack>
       <PackagePath>$(TargetFramework)</PackagePath>
+    </Content>
+    <Content Include="$(OutputPath)\Flurl.dll">
+      <Pack>true</Pack>
+      <PackagePath>$(TargetFramework)</PackagePath>
+      <Visible>false</Visible>
     </Content>
   </ItemGroup>
 

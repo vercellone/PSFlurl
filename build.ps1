@@ -29,8 +29,22 @@ if ($Configuration -eq 'Release') {
     $rawManifest = Get-Content -Path $manifestPath -Raw
     $versionedManifest = $rawManifest -replace 'ModuleVersion[^\n\r]*', "ModuleVersion = '$Version'"
     Set-Content -Path $manifestPath -Value $versionedManifest -Encoding utf8
-    # Package and update the assembly and nuspec version
-    dotnet pack -c $Configuration -p:Version=$Version --output $outputPath
+
+
+    # Build and pack
+    dotnet build -c $Configuration -p:Version=$Version
+
+    $netStandardPath = Join-Path $outputpath 'netstandard2.0'
+    # Ensure assembly directory exists
+    if (-not (Test-Path $netStandardPath)) {
+        $null = New-Item -ItemType Directory -Path $netStandardPath -Force
+    }
+    # Copy dependency DLLs
+    $binPath = Join-Path $PSScriptRoot 'src' 'bin' $Configuration 'netstandard2.0'
+    Copy-Item -Path "$binPath/*Flurl.dll" -Destination $netStandardPath -Force
+    
+    # Pack after dependencies are in place
+    dotnet pack -c $Configuration -p:Version=$Version --no-build --output $outputPath
 }
 else {
     dotnet build -c $Configuration
