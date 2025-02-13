@@ -5,7 +5,7 @@
             "type": "PowerShell",
             "request": "launch",
             "name": "PowerShell: Launch PowerShell",
-            "script": "Import-Module -Name '${workspaceFolder}/PSFlurl.psd1' -Force -Verbose",
+            "script": "Import-Module -Name '${workspaceFolder}/PSFlurl/PSFlurl.psd1' -Force -Verbose",
             "args": [],
             "cwd": "${workspaceFolder}",
             "createTemporaryIntegratedConsole": true,

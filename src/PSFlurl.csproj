@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>PSFlurl</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Version Information managed by GitVersion -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!-- Package settings -->
+    <!-- Manifest settings -->
+    <PackageId>PSFlurl</PackageId>
+    <Authors>Jason Vercellone</Authors>
+    <CompanyName>vercellone</CompanyName>
+    <Copyright>Copyright ©  2025</Copyright>
+    <Description>Fluent URL Building with Flurl</Description>
+    <!-- End Manifest settings -->
+    <BuildOutputTargetFolder>.</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <NoWarn>NU5100</NoWarn>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <!-- End Package settings -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl" Version="4.0.0" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)/../icon.png" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)/../LICENSE" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)/../PSFlurl.psd1" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)/../PSFlurl.Types.ps1xml" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)/../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(OutDir)\*Flurl.dll">
+      <Pack>true</Pack>
+      <PackagePath>$(TargetFramework)</PackagePath>
+    </Content>
+  </ItemGroup>
+</Project>

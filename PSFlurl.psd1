@@ -9,7 +9,7 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'lib/netstandard2.0/PSFlurl.dll'
+RootModule = 'netstandard2.0/PSFlurl.dll'
 
 # Version number of this module.
 ModuleVersion = '1.0.0'
@@ -54,7 +54,7 @@ PowerShellVersion = '5.1'
 # RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
-RequiredAssemblies = 'lib/netstandard2.0/Flurl.dll', 'lib/netstandard2.0/PSFlurl.dll'
+RequiredAssemblies = 'netstandard2.0/Flurl.dll', 'netstandard2.0/PSFlurl.dll'
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
@@ -87,8 +87,13 @@ AliasesToExport = 'Get-FlQuery', 'Get-Flurl'
 # ModuleList = @()
 
 # List of all files packaged with this module
-# FileList = 'lib/netstandard2.0/Flurl.dll', 'lib/netstandard2.0/PSFlurl.dll', 'PSFlurl.Types.ps1xml'
-
+FileList       = @(
+    'netstandard2.0/Flurl.dll'
+    'netstandard2.0/PSFlurl.dll'
+    'LICENSE'
+    'PSFlurl.Types.ps1xml'
+    'README.md'
+)
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
 
@@ -129,4 +134,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
