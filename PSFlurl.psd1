@@ -87,9 +87,7 @@ AliasesToExport = 'Get-FlQuery', 'Get-Flurl'
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList = 'icon.png', 'lib/netstandard2.0/Flurl.dll', 
-               'lib/netstandard2.0/PSFlurl.dll', 'LICENSE', 'PSFlurl.Types.ps1xml', 
-               'README.md'
+# FileList = 'lib/netstandard2.0/Flurl.dll', 'lib/netstandard2.0/PSFlurl.dll', 'PSFlurl.Types.ps1xml'
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
@@ -100,7 +98,7 @@ PrivateData = @{
         Tags = 'PSFlurl','Flurl','ParseQueryString','QueryString','Uri','Url'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/vercellone/PSFlurl/raw/main/LICENSE'
+        LicenseUri = 'https://github.com/vercellone/PSFlurl/blob/main/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/vercellone/PSFlurl'

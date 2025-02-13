@@ -6,11 +6,8 @@
     <CompanyName>vercellone</CompanyName>
     <Copyright>Copyright ©  2025</Copyright>
     <Description>Fluent URL Building with Flurl</Description>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <OutputPath>$(MSBuildThisFileDirectory)../../lib</OutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <PackageIcon>icon.png</PackageIcon>
 
     <!-- Version Information managed by GitVersion -->
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -22,11 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)../../LICENSE" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../PSFlurl.psd1" Pack="true" PackagePath="" />
     <None Include="$(MSBuildThisFileDirectory)../../PSFlurl.Types.ps1xml" Pack="true" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)../../icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="AddDependencies" BeforeTargets="GenerateNuspec">
