@@ -161,4 +161,7 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.POWERSHELLGALLERY_API_KEY }}
         run: |
-          dotnet nuget push ./artifacts/*.nupkg --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
+          $nupkg = Get-ChildItem ./artifacts/PSFlurl.*.nupkg
+          Write-Host "Publishing package: $($nupkg.FullName)"
+          dotnet nuget push $nupkg.FullName --api-key ${{ env.NUGET_KEY }} --source https://www.powershellgallery.com/api/v2/package
+        shell: pwsh
