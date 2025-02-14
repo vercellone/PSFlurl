@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml/badge.svg)](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml)
 
-PSFlurl was born out of frustration with the limitations of .NET's `Uri`, `UriBuilder`, and `HttpUtility.ParseQueryString`. These native tools fall short when dealing with modern URL manipulation needs, especially with regard to encoding paths and query strings. After evaluating various options, the [Flurl](https://flurl.dev) library emerged as the clear solution, offering an elegant and powerful API for URL manipulation.
+PSFlurl was born out of frustration with the limitations of .NET's `Uri`, `UriBuilder`, `HttpUtility.ParseQueryString`, and `HttpQSCollection.ToString()`. These native tools fall short when dealing with modern URL manipulation needs, especially with regard to encoding paths and query strings. After evaluating various options, the [Flurl](https://flurl.dev) library emerged as the clear solution, offering an elegant and powerful API for URL manipulation.
 
 ## Why PSFlurl?
 
@@ -26,87 +26,16 @@ The PowerShell module exposes all of the above via the following cmdlets
 - `New-Flurl`: Creates and manipulates URLs with a fluent interface
 - `New-FlQuery`: Constructs query strings with advanced options
 
-## Examples
+> [!TIP]
+> `Get-Flurl` and `Get-FlQuery` aliases are exported.
+> `Flurl` and `FlQuery` work, too!
 
-### Working with Query Parameters
+## Usage
 
-```powershell
-# Simple Hashtable
-New-Flurl -Uri 'https://api.example.com' -Query @{
-    search = 'powershell module'
-    filter = 'active'
-} -AsString
+<details open>
+<summary>Url</summary>
 
-https://api.example.com/?filter=active&search=powershell%20module
-```
-
-#### Using `+` encoding for spaces
-
-```powershell
-New-Flurl -Uri 'https://api.example.com' -Query @{
-    search = 'powershell module'
-} -EncodeSpaceAsPlus -AsString
-
-https://api.example.com/?search=powershell+module
-```
-
-### Handling Null Values
-
-#### Remove (Default)
-```powershell
-New-FlQuery -Query @{
-    required = 'value'
-    optional = $null
-} -NullValueHandling Remove -AsString
-
-required=value
-```
-
-#### Ignore
-```powershell
-New-FlQuery -Query @{
-    required = 'value'
-    optional = $null
-} -NullValueHandling Ignore -AsString
-
-optional=&required=value
-```
-
-#### NameOnly
-```powershell
-New-FlQuery -Query @{
-    required = 'value'
-    optional = $null
-} -NullValueHandling NameOnly -AsString
-
-optional&required=value
-```
-
-### Duplicate Query Parameters
-
-#### Using array of hashtables
-```powershell
-New-FlQuery -Query @(
-    @{ state = 'OPEN' },
-    @{ state = 'MERGED' }
-) -AsString
-
-state=OPEN&state=MERGED
-```
-
-#### Using NameValueCollection
-```powershell
-$nvc = [System.Collections.Specialized.NameValueCollection]::new()
-$nvc.Add('tag', 'powershell')
-$nvc.Add('tag', 'module')
-New-FlQuery -Query $nvc -AsString
-
-tag=powershell&tag=module
-```
-
-### Complex URL Construction
-
-```powershell
+```powershell copy
 $splat = @{
     Uri               = 'https://api.example.com'
     Path              = @('v2', 'search')
@@ -121,20 +50,128 @@ $splat = @{
 }
 New-Flurl @splat
 
-https://api.example.com/v2/search?q=test+query&sort=relevance&filter=active#results
+# https://api.example.com/v2/search?q=test+query&sort=relevance&filter=active#results
 ```
+</details>
+
+<details>
+<summary>Repeated Names</summary>
+
+### Array of Hashtables
+```powershell copy
+New-FlQuery -Query @(
+    @{ state = 'OPEN' },
+    @{ state = 'MERGED' }
+) -AsString
+
+# state=OPEN&state=MERGED
+```
+
+### NameValueCollection
+```powershell copy
+$nvc = [System.Collections.Specialized.NameValueCollection]::new()
+$nvc.Add('tag', 'powershell')
+$nvc.Add('tag', 'module')
+New-FlQuery -Query $nvc -AsString
+
+# tag=powershell&tag=module
+```
+</details>
+
+<details>
+<summary>NullOrEmpty Values</summary>
+
+### Remove (Default)
+```powershell copy
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling Remove -AsString
+
+# required=value
+```
+
+### Ignore
+```powershell copy
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling Ignore -AsString
+
+# optional=&required=value
+```
+
+### NameOnly
+```powershell copy
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling NameOnly -AsString
+
+# optional&required=value
+```
+</details>
+
+<details>
+  <summary>`+` encoding spaces</summary>
+
+  ```powershell copy
+  New-Flurl -Uri 'https://api.example.com' -Query @{
+      search = 'powershell module'
+  } -EncodeSpaceAsPlus -AsString
+
+  # https://api.example.com/?search=powershell+module
+  ```
+
+</details>
+
+<details>
+  <summary>Fluent</summary>
+
+  ```powershell copy
+  (Flurl 'https://some-api.com:88').
+  AppendPathSegment('endpoint').
+  SetFragment('after-hash').
+  AppendQueryParam(@{
+        api_key = 'MyApiKey'
+         max_results = 20
+         q = 'I''ll get encoded!'
+  }).
+  ToString()
+
+  # https://some-api.com/endpoint?q=I%27ll%20get%20encoded%21&api_key=MyApiKey&max_results=20#after-hash
+  ```
+
+</details>
+
+<details>
+  <summary>Utility Methods</summary>
+
+  ```powershell copy
+
+  $url = [Flurl.Url]::Combine('http://foo.com/', '/too/', '/many/', '/slashes/', 'too', 'few?', 'x=1', 'y=2')
+  $url.ToString()
+
+  # http://foo.com/too/many/slashes/too/few?x=1&y=2
+
+  [Flurl.Url]::IsValid($url)
+
+  # True
+  ```
+
+</details>
 
 ## Installation
 
 ### Install from PowerShellGallery
 
-```powershell
+```powershell copy
 Install-Module -Name PSFlurl -Repository PSGallery -Scope CurrentUser
 ```
 
 ### Import the module
 
-```powershell
+```powershell copy
 Import-Module -Name PSFlurl
 ```
 
