@@ -1,0 +1,111 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# PSFlurl Examples
+First, let's import the module:
+
+#!pwsh
+
+Import-Module PSFlurl -Force
+
+#!markdown
+
+## URL Construction
+
+#!pwsh
+
+$splat = @{
+    Uri               = 'https://api.example.com'
+    Path              = @('v2', 'search')
+    Query             = [ordered]@{
+        q      = 'test query'
+        filter = 'active'
+        sort   = 'relevance'
+    }
+    Fragment          = 'results'
+    EncodeSpaceAsPlus = $true
+    AsString          = $true
+}
+New-Flurl @splat
+
+#!markdown
+
+## Working with Repeated Names
+
+#!pwsh
+
+# Array of Hashtables
+New-FlQuery -Query @(
+    @{ state = 'OPEN' },
+    @{ state = 'MERGED' }
+) -AsString
+
+# NameValueCollection
+$nvc = [System.Collections.Specialized.NameValueCollection]::new()
+$nvc.Add('tag', 'powershell')
+$nvc.Add('tag', 'module')
+New-FlQuery -Query $nvc -AsString
+
+#!markdown
+
+## Handling NullOrEmpty Values
+
+#!pwsh
+
+# Remove (Default)
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling Remove -AsString
+
+# Ignore
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling Ignore -AsString
+
+# NameOnly
+New-FlQuery -Query @{
+    required = 'value'
+    optional = $null
+} -NullValueHandling NameOnly -AsString
+
+#!markdown
+
+## Space Encoding Options
+
+#!pwsh
+
+New-Flurl -Uri 'https://api.example.com' -Query @{
+    search = 'powershell module'
+} -EncodeSpaceAsPlus -AsString
+
+#!markdown
+
+## Fluent Interface
+
+#!pwsh
+
+(Flurl 'https://some-api.com:88').
+AppendPathSegment('endpoint').
+SetFragment('after-hash').
+AppendQueryParam(@{
+    api_key = 'MyApiKey'
+    max_results = 20
+    q = 'I''ll get encoded!'
+}).
+ToString()
+
+#!markdown
+
+## Utility Methods
+
+#!pwsh
+
+$url = [Flurl.Url]::Combine('http://foo.com/', '/too/', '/many/', '/slashes/', 'too', 'few?', 'x=1', 'y=2')
+$url.ToString()
+
+[Flurl.Url]::IsValid($url)
