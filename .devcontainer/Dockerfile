@@ -1,15 +1,9 @@
 # Use the official PowerShell image as a base
-FROM mcr.microsoft.com/devcontainers/dotnet
+FROM mcr.microsoft.com/docker/sdk:9.0-preview-bookworm-slim
 
-# # Install necessary dependencies
-# RUN apt-get update && apt-get install -y \
-#     curl \
-#     git \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
+# [Optional] Uncomment this section to install additional packages.
+# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+#     && apt-get -y install --no-install-recommends <your-package-list-here>
 
-# Set the default shell to PowerShell
-SHELL ["pwsh", "-Command"]
-
-# Set the working directory
-WORKDIR /workspaces/PSFlurl
+# [Optional] Set the default user. Omit if you want to keep the default as root.
+# USER vscode
