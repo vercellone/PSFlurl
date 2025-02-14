@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml/badge.svg)](https://github.com/vercellone/PSFlurl/actions/workflows/ci.yml)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/PSFlurl.svg?style=flat-square&color=012456&label=PowerShell%20Gallery)](https://www.powershellgallery.com/packages/PSFlurl)
-[![Try it Now](https://img.shields.io/badge/Try_It_Now-Codespaces-161B22?style=flat-square&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=929630232)
+[![Try it Now](https://img.shields.io/badge/Try_It_Now-Codespaces-161B22?style=flat-square&logo=github)](https://codespaces.new/vercellone/PSFlurl?quickstart=1)
 
 PSFlurl was born out of frustration with the limitations of .NET's `Uri`, `UriBuilder`, `HttpUtility.ParseQueryString`, and `HttpQSCollection.ToString()`. These native tools fall short when dealing with modern URL manipulation needs, especially with regard to encoding paths and query strings. After evaluating various options, the [Flurl](https://flurl.dev) library emerged as the clear solution, offering an elegant and powerful API for URL manipulation.
 
