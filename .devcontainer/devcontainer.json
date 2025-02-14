@@ -1,21 +1,28 @@
 {
     "name": "PowerShell Development Container",
     "build": {
-        "dockerfile": "DockerFile"
+        "dockerfile": "Dockerfile"
     },
     "customizations": {
         "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-vscode.powershell"
+            ],
             "settings": {
-                "terminal.integrated.shell.linux": "/usr/bin/pwsh"
+                "terminal.integrated.defaultProfile.linux": "pwsh"
             }
         }
     },
-    "postCreateCommand": "pwsh -c 'Import-Module /workspaces/PSFlurl/Flurl.psd1'",
     "remoteUser": "vscode",
     "workspaceFolder": "/workspaces/PSFlurl",
     "features": {
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "9.0"
+        },
         "ghcr.io/devcontainers/features/powershell:1": {
-            "version": "latest"
+            "version": "latest",
+            "modules": ["PSFlurl"]
         },
         "ghcr.io/natescherer/devcontainers-custom-features/powershell-resources:1": {}
     }
