@@ -7,7 +7,8 @@
         "vscode": {
             "extensions": [
                 "ms-dotnettools.csharp",
-                "ms-vscode.powershell"
+                "ms-vscode.powershell",
+                "ms-dotnettools.dotnet-interactive-vscode"
             ],
             "settings": {
                 "terminal.integrated.defaultProfile.linux": "pwsh"
