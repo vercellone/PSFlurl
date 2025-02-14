@@ -11,7 +11,8 @@
                 "ms-dotnettools.dotnet-interactive-vscode"
             ],
             "settings": {
-                "terminal.integrated.defaultProfile.linux": "pwsh"
+                "terminal.integrated.defaultProfile.linux": "pwsh",
+                "workbench.startupEditor": "none"
             }
         }
     },
@@ -24,7 +25,7 @@
         "ghcr.io/devcontainers/features/powershell:1": {
             "version": "latest",
             "modules": ["PSFlurl"]
-        },
-        "ghcr.io/natescherer/devcontainers-custom-features/powershell-resources:1": {}
-    }
+        }
+    },
+    "postCreateCommand": "code examples/PSFlurl.dib"
 }

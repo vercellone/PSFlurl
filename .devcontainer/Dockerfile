@@ -6,4 +6,4 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0-preview-bookworm-slim
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
-# USER vscode
+USER vscode
