@@ -100,7 +100,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'PSFlurl','Flurl','ParseQueryString','QueryString','Uri','Url'
+        Tags = 'PSFlurl','Flurl','HttpQSCollection','ParseQueryString','QueryString','Uri','Url'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/vercellone/PSFlurl/blob/main/LICENSE'
